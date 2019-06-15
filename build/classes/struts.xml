@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+    "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+	<constant name="struts.enable.SlashesInActionNames" value="true" />
+	<constant name="struts.mapper.alwaysSelectFullNamespace" value="false" />
+	<constant name="struts.patternMatcher" value="regex" />
+	<constant name="struts.convention.action.suffix" value="Controller" />
+	<constant name="struts.mapper.class" value="com.api.handler.RestActionMapper" />
+
+	<package name="restapi" namespace="/api" extends="struts-default">
+		<interceptors>
+			<interceptor name="APIAuth" class="com.api.interceptor.APIAuth"></interceptor>
+				<interceptor-stack name="default">
+				<interceptor-ref name="APIAuth" />
+			</interceptor-stack>
+		</interceptors>
+		
+		<default-interceptor-ref name="default"/>
+		
+		<global-results>
+		    <result name="APIException">/APIException.jsp</result>
+		    <result name="success">/response.jsp</result>
+		</global-results>
+		
+		<global-allowed-methods>regex:.*</global-allowed-methods>
+		
+		<global-exception-mappings>
+		    <exception-mapping exception="com.api.exception.APIException" result="APIException" />
+		    <exception-mapping exception="java.lang.Exception" result="APIException" />
+		</global-exception-mappings>
+		
+		<action name="{version:v\d+|v\d+\.\d+}/ping" class="com.api.v1.Router" method="ping">
+			<param name="pattern">version/feature</param>
+		</action>
+	</package>
+</struts>
