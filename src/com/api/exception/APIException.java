@@ -13,11 +13,12 @@ import com.api.constant.APIConstants;
 import com.api.handler.ResponseBuilder;
 import com.opensymphony.xwork2.ActionContext;
 
-import net.bytebuddy.asm.Advice.This;
-
 import static com.api.constant.APIConstants.Response.*;
 
 public class APIException extends Exception{
+	
+	
+	private static final long serialVersionUID = 2233904142464457425L;
 	
 	private int statusCode;
 	private String errorCode;
