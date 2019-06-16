@@ -6,10 +6,16 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.api.constant.APIConstants;
+import com.api.handler.ResponseBuilder;
 import com.opensymphony.xwork2.ActionContext;
+
+import net.bytebuddy.asm.Advice.This;
+
+import static com.api.constant.APIConstants.Response.*;
 
 public class APIException extends Exception{
 	
@@ -50,14 +56,20 @@ public class APIException extends Exception{
 		this.setExtraDetails(extraDetails);
 	}
 	
-	public static void handleException(HttpServletRequest request, HttpServletResponse response){
-		response.setHeader("Content-Disposition", "attachment; filename=response.json");
+	public static void handleException(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		Object e = ActionContext.getContext().getValueStack().findValue("exception");
+		APIException ex = null;
 		if(e != null && e instanceof APIException){
-			APIException ex = (APIException) e;
+			ex = (APIException) e;
+		}else {
+			ex = new APIException(APIConstants.StatusCodes.INTERNAL_SERVER_ERROR, APIConstants.ERRORCodes.INTERNAL_SERVER_ERROR, APIConstants.ERRORMessages.INTERNAL_SERVER_ERROR);
 		}
-		
-		
+		handleException(ex, request, response);
+	}
+	
+	public static void handleException(APIException e, HttpServletRequest request, HttpServletResponse response) throws Exception{
+		response.setHeader("Content-Disposition", "attachment; filename=response.json");
+		ResponseBuilder.writeExceptionResponse(e, response);
 	}
 
 	public int getStatusCode() {
@@ -98,6 +110,15 @@ public class APIException extends Exception{
 
 	public void setApiName(String apiName) {
 		this.apiName = apiName;
+	}
+	
+	public JSONObject getErrorJSON() throws JSONException {
+		JSONObject json = new JSONObject();
+		json.put(CODE, this.errorCode);
+		json.put(DETAILS, this.extraDetails);
+		json.put(MESSAGE, this.errorMessage);
+		json.put(STATUS, ERROR);
+		return json;
 	}
 	
 }
