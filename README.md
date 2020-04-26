@@ -28,25 +28,25 @@
 <li> <b>addResponse</b> method will convert the response to JSON and send it to user</li>
 </ul>
 </p>
-<p>
-<b>Framework Flowt</b>
-<ul> An endpoint called - 
-<li>struts2 validates whether the url is present in struts.xml file</li>
-<li>The customized <b>RestActionMapper</b> will be called by struts, where before calling the method in the <b>Router</b>, we validate and handles business requirements </li>
-<li>The call now goes to <b>Router</b> class and the method mentioned in the struts.xml file will be executed </li>
-<li>In this method, we can call the Utils of a class and return the response. </li>
-<li><b>addResponse</b> method converts the response to JSON</li>
-</ul>
 
-
-</p>
 
 
 <p>
 <b>How to further customized it</b>
-To customized further, 
-
-
+To customized further - 
+<ul>
+  <li>To add additional business needs before the call goes to Router, <b>RestActionMapper</b> can be customized. The RestActionMapper is already customized to meet this business need - 
+    <ul>
+      <li>for any method in struts.xml, the Router class should contain {HTTP METHOD}_{METHOD NAME}</li>
+      <li>This is handled in RestActionMapper between line 56 and 64</li>
+    </ul>
+  </li>
+<li>If you want to monitor every URL or want to handle API limit, This could also be achieved from RestActionMapper, by calling respective service for verification </li> 
+<li>Initiaalization of business entities can be done from RestActionMapper and setted in ActionMapper stack of struts2 to get at later point of time. For more info check line 83 in RestActionMapper class </li>   
+<li>All necessary classes related to Exception are present in excepion package. You can customized them according to your needs</li>   
+  <li>handle package contains Response, ResponseBuilder and RestActionMapper which can be customized according to business needs</li> 
+</ul>
 </p>
 
+<p><b>Please feel free to ask your queries</b></p>
 
